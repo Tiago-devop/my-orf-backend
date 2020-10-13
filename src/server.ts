@@ -1,4 +1,6 @@
 import express from 'express'
+import { getRepository } from 'typeorm'
+import Orphanage from './models/Orphanage'
 
 import './database/connection'
 
@@ -6,25 +8,35 @@ const app = express()
 
 app.use(express.json()) // p/ o express entender que é um json
 
-// Rota = conjunto
-// Recurso = usuário
+app.post('/orphanages', async (request, response) => {
+    const {
+        name,
+        latitude,
+        longitude,
+        about,
+        instructions,
+        opening_hours,
+        open_on_weekends,
+    } = request.body
 
-// Método HTTP = GET, POST, PUT, DELETE
-// Parâmetros
+    const orphanagesRepository = getRepository(Orphanage)
 
-// GET = Buscar uma informação (Lista, item)
-// POST = Criando uma informação
+    const orphanage = orphanagesRepository.create({
+        name,
+        latitude,
+        longitude,
+        about,
+        instructions,
+        opening_hours,
+        open_on_weekends,
+    })
 
-// PUT = Editando uma informação
-// DELETE = Deletando uma informação
+    await orphanagesRepository.save(orphanage)
 
-// Query Params: http://localhost:3333/users?search=tiago
-// Route Params: http:localhost:3333/users/1 (Identificar um recurso)
-// Body: http:localhost:3333/users/1 (Identificar um recurso)
-
-app.get('/users', (request, response) => {
     return response.json({ message: 'Hello World' })
 })
+
+
 
 app.listen(3333)
 
